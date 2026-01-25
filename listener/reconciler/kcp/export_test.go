@@ -4,6 +4,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	mcmanager "sigs.k8s.io/multicluster-runtime/pkg/manager"
 )
 
 // Exported functions for testing private functions
@@ -47,6 +48,11 @@ type ExportedDiscoveryFactory = DiscoveryFactory
 type ExportedDiscoveryFactoryProvider = DiscoveryFactoryProvider
 type ExportedAPIBindingReconciler = APIBindingReconciler
 type ExportedKCPReconciler = KCPReconciler
+
+// SetMCManager sets the multicluster manager on an APIBindingReconciler for testing
+func (r *APIBindingReconciler) SetMCManager(mgr mcmanager.Manager) {
+	r.mcManager = mgr
+}
 
 // Helper function to create ClusterPathResolverProvider with custom clientFactory for testing
 func NewClusterPathResolverProviderWithFactory(cfg *rest.Config, scheme *runtime.Scheme, factory func(config *rest.Config, options client.Options) (client.Client, error)) *ClusterPathResolverProvider {

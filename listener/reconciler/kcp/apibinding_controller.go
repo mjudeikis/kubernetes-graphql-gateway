@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"io/fs"
 	"strings"
 
@@ -16,14 +17,15 @@ import (
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
-	"sigs.k8s.io/controller-runtime/pkg/client"
-
-	kcpapis "github.com/kcp-dev/sdk/apis/apis/v1alpha2"
+	mcmanager "sigs.k8s.io/multicluster-runtime/pkg/manager"
+	mcreconcile "sigs.k8s.io/multicluster-runtime/pkg/reconcile"
 )
+
+// Ensure APIBindingReconciler implements mcreconcile.Reconciler
+var _ mcreconcile.Reconciler = &APIBindingReconciler{}
 
 // APIBindingReconciler reconciles an APIBinding object
 type APIBindingReconciler struct {
-	Client              client.Client
 	Scheme              *runtime.Scheme
 	RestConfig          *rest.Config
 	IOHandler           *workspacefile.FileHandler
@@ -31,9 +33,10 @@ type APIBindingReconciler struct {
 	APISchemaResolver   apischema.Resolver
 	ClusterPathResolver ClusterPathResolver
 	Log                 *logger.Logger
+	mcManager           mcmanager.Manager
 }
 
-func (r *APIBindingReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *APIBindingReconciler) Reconcile(ctx context.Context, req mcreconcile.Request) (ctrl.Result, error) {
 	// ignore system workspaces (e.g. system:shard)
 	if strings.HasPrefix(req.ClusterName, "system") {
 		return ctrl.Result{}, nil
@@ -41,11 +44,13 @@ func (r *APIBindingReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 
 	logger := r.Log.With().Str("cluster", req.ClusterName).Str("name", req.Name).Logger()
 
-	clusterClt, err := r.ClusterPathResolver.ClientForCluster(req.ClusterName)
+	// Get cluster from the multicluster manager
+	cluster, err := r.mcManager.GetCluster(ctx, req.ClusterName)
 	if err != nil {
-		logger.Error().Err(err).Msg("failed to get cluster client")
-		return ctrl.Result{}, err
+		logger.Error().Err(err).Msg("failed to get cluster from manager")
+		return ctrl.Result{}, fmt.Errorf("failed to get cluster: %w", err)
 	}
+	clusterClt := cluster.GetClient()
 
 	clusterPath, err := PathForCluster(req.ClusterName, clusterClt)
 	if err != nil {
@@ -114,9 +119,4 @@ func (r *APIBindingReconciler) generateCurrentSchema(dc discovery.DiscoveryInter
 		r.APISchemaResolver,
 		r.Log,
 	)
-}
-func (r *APIBindingReconciler) SetupWithManager(mgr ctrl.Manager) error {
-	return ctrl.NewControllerManagedBy(mgr).
-		For(&kcpapis.APIBinding{}).
-		Complete(r)
 }

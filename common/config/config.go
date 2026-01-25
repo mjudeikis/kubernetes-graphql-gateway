@@ -14,6 +14,7 @@ type Config struct {
 
 	Listener struct {
 		VirtualWorkspacesConfigPath string `mapstructure:"virtual-workspaces-config-path"`
+		APIExportEndpointSliceName  string `mapstructure:"apiexport-endpoint-slice-name"`
 	} `mapstructure:",squash"`
 
 	Gateway struct {
