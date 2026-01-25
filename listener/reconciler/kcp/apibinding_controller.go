@@ -18,7 +18,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	kcpapis "github.com/kcp-dev/kcp/sdk/apis/apis/v1alpha1"
+	kcpapis "github.com/kcp-dev/sdk/apis/apis/v1alpha2"
 )
 
 // APIBindingReconciler reconciles an APIBinding object

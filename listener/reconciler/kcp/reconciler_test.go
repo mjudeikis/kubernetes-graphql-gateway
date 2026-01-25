@@ -15,8 +15,8 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
-	kcpapis "github.com/kcp-dev/kcp/sdk/apis/apis/v1alpha1"
-	kcpcore "github.com/kcp-dev/kcp/sdk/apis/core/v1alpha1"
+	kcpapis "github.com/kcp-dev/sdk/apis/apis/v1alpha2"
+	kcpcore "github.com/kcp-dev/sdk/apis/core/v1alpha1"
 )
 
 func TestNewKCPReconciler(t *testing.T) {

@@ -7,7 +7,7 @@ This page shows you how to get started using the GraphQL Gateway for Kubernetes.
 - Installed [Taskfile](https://taskfile.dev/installation)
 - A Kubernetes cluster to connect to (some options below)
   - Option A: Preexisting standard Kubernetes cluster
-  - Option B: Preexisting Kubernetes cluster that is available through [Kubernetes Control Plane (KCP)](https://docs.kcp.io/kcp/main/setup/quickstart/)
+  - Option B: Preexisting Kubernetes cluster that is available through [Kubernetes-like Control Planes (kcp)](https://docs.kcp.io/kcp/main/setup/quickstart/)
   - Option C: Create your own locally running Kubernetes cluster using [kind](https://kind.sigs.k8s.io/)
 - Clone the `kubernetes-graphql-gateway` repository and change to the root directory
 ```shell
@@ -26,7 +26,7 @@ Make sure you have completed the steps from the [Prerequisites](#prerequisites) 
 task listener
 ```
 This will create a directory `./bin/definitions` and start watching the cluster APIs for changes.
-In that directory a file will be created for each workspace in KCP or a standard Kubernetes cluster.
+In that directory a file will be created for each workspace in kcp or a standard Kubernetes cluster.
 The file will contain the API definitions for the resources in that workspace.
 
 ## Running the Gateway

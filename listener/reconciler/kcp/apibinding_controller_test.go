@@ -23,7 +23,7 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	kcpcore "github.com/kcp-dev/kcp/sdk/apis/core/v1alpha1"
+	kcpcore "github.com/kcp-dev/sdk/apis/core/v1alpha1"
 )
 
 func TestAPIBindingReconciler_Reconcile(t *testing.T) {
