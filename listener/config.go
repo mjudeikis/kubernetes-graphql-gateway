@@ -4,8 +4,11 @@ import (
 	"fmt"
 
 	"github.com/kcp-dev/multicluster-provider/apiexport"
+	"github.com/platform-mesh/golang-commons/logger"
 	gatewayv1alpha1 "github.com/platform-mesh/kubernetes-graphql-gateway/common/apis/v1alpha1"
 	"github.com/platform-mesh/kubernetes-graphql-gateway/listener/options"
+	"github.com/platform-mesh/kubernetes-graphql-gateway/listener/pkg/apischema"
+	"github.com/platform-mesh/kubernetes-graphql-gateway/listener/pkg/workspacefile"
 	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
@@ -34,6 +37,9 @@ type Config struct {
 	Scheme  *runtime.Scheme
 
 	ClientConfig *rest.Config
+
+	IOHandler      *workspacefile.FileHandler
+	SchemaResolver apischema.Resolver
 }
 
 func NewConfig(options *options.CompletedOptions) (*Config, error) {
@@ -110,6 +116,20 @@ func NewConfig(options *options.CompletedOptions) (*Config, error) {
 	}
 
 	config.Manager = manager
+
+	// Initialize FileHandler for schema storage
+	ioHandler, err := workspacefile.NewIOHandler(options.SchemasDir)
+	if err != nil {
+		return nil, fmt.Errorf("error creating IO handler: %w", err)
+	}
+	config.IOHandler = ioHandler
+
+	// Initialize schema resolver
+	log, err := logger.New(logger.DefaultConfig())
+	if err != nil {
+		return nil, fmt.Errorf("error creating logger: %w", err)
+	}
+	config.SchemaResolver = apischema.NewResolver(log)
 
 	return config, nil
 }

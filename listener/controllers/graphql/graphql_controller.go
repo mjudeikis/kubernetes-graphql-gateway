@@ -22,7 +22,10 @@ import (
 	"reflect"
 
 	gatewayv1alpha1 "github.com/platform-mesh/kubernetes-graphql-gateway/common/apis/v1alpha1"
+	"github.com/platform-mesh/kubernetes-graphql-gateway/listener/pkg/apischema"
+	"github.com/platform-mesh/kubernetes-graphql-gateway/listener/pkg/workspacefile"
 	"k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/log"
@@ -39,7 +42,7 @@ const (
 type GraphQLReconciler struct {
 	manager    mcmanager.Manager
 	opts       controller.TypedOptions[mcreconcile.Request]
-	reconciler reconciler
+	reconciler *reconciler
 }
 
 // NewGraphQLReconciler returns a new GraphQLReconciler to reconcile GraphQLs
@@ -48,11 +51,14 @@ func NewGraphQLReconciler(
 	_ context.Context,
 	mgr mcmanager.Manager,
 	opts controller.TypedOptions[mcreconcile.Request],
+	ioHandler *workspacefile.FileHandler,
+	schemaResolver apischema.Resolver,
+	hostConfig *rest.Config,
 ) (*GraphQLReconciler, error) {
 	r := &GraphQLReconciler{
 		manager:    mgr,
 		opts:       opts,
-		reconciler: reconciler{},
+		reconciler: newReconciler(ioHandler, schemaResolver, hostConfig),
 	}
 
 	return r, nil
@@ -82,7 +88,7 @@ func (r *GraphQLReconciler) Reconcile(ctx context.Context, req mcreconcile.Reque
 	}
 
 	original := graphql.DeepCopy()
-	if err := r.reconciler.reconcile(ctx, client, cache, graphql); err != nil {
+	if err := r.reconciler.reconcile(ctx, req.ClusterName, client, cache, graphql); err != nil {
 		logger.Error(err, "Failed to reconcile GraphQL")
 		return ctrl.Result{}, err
 	}

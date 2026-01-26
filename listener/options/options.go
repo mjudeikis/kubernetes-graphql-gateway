@@ -23,6 +23,8 @@ type ExtraOptions struct {
 	KubeConfig string
 
 	Provider string
+
+	SchemasDir string
 }
 
 type completedOptions struct {
@@ -48,7 +50,8 @@ func NewOptions() *Options {
 		ProviderKcp: providerkcp.NewOptions(),
 
 		ExtraOptions: ExtraOptions{
-			Provider: "kubernetes",
+			Provider:   "kubernetes",
+			SchemasDir: "/tmp/schemas",
 		},
 	}
 	return opts
@@ -69,6 +72,8 @@ func (options *Options) AddFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&options.Provider, "multicluster-runtime-provider", options.Provider,
 		fmt.Sprintf("The multicluster runtime provider. Possible values are: %v", sets.List(sets.Set[string](sets.StringKeySet(providerAliases)))),
 	)
+
+	fs.StringVar(&options.SchemasDir, "schemas-dir", options.SchemasDir, "Directory to store schema files")
 }
 
 func (options *Options) Complete() (*CompletedOptions, error) {

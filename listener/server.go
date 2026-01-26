@@ -35,6 +35,9 @@ func NewServer(ctx context.Context, c *Config) (*Server, error) {
 		ctx,
 		s.Config.Manager,
 		opts,
+		s.Config.IOHandler,
+		s.Config.SchemaResolver,
+		s.Config.ClientConfig,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("error setting up GraphQL Controller: %w", err)

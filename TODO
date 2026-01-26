@@ -1,0 +1,7 @@
+1. Remove anker object `graphql` and maybe build 2 controllers for kcp and k8s. 
+   k8s - anker on namespace `kube-system` (or overrided in config)
+   kcp - anker to apibinding and its cluster name (same as mcr provider does)
+2. Add shared reconciler for both controllers
+3. add tracking go routine for every cluster url to refresh shemas periodically
+4. Add schema rest api server to listener to serve schemas by cluster name (and potentialy write to disk too for dev)
+5. Add apiexport for graphql schema for kcp and see how we could run graphql gateway in kcp without need of high permissions (apiexport permissions to openai url maybe?)

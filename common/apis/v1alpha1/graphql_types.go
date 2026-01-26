@@ -16,8 +16,20 @@ type GraphQL struct {
 }
 
 type GraphQLSpec struct {
-	// URL is the GraphQL endpoint URL
-	URL string `json:"url"`
+	KubeconfigSecretRef *GraphQLKubeconfigSecretRef `json:"kubeconfigSecretRef,omitempty"`
+	ServiceAccountRef   *GrapQLServiceAccountRef    `json:"serviceAccountRef,omitempty"`
+}
+
+type GrapQLServiceAccountRef struct {
+	Name      string `json:"name,omitempty"`
+	Namespace string `json:"namespace,omitempty"`
+}
+
+// GraphQLKubeconfigSecretRef defines a reference to a kubeconfig secret
+type GraphQLKubeconfigSecretRef struct {
+	Name      string `json:"name"`
+	Namespace string `json:"namespace,omitempty"`
+	Key       string `json:"key"`
 }
 
 type GraphQLStatus struct {

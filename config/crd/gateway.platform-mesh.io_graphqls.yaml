@@ -38,11 +38,27 @@ spec:
             type: object
           spec:
             properties:
-              url:
-                description: URL is the GraphQL endpoint URL
-                type: string
-            required:
-            - url
+              kubeconfigSecretRef:
+                description: GraphQLKubeconfigSecretRef defines a reference to a kubeconfig
+                  secret
+                properties:
+                  key:
+                    type: string
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                required:
+                - key
+                - name
+                type: object
+              serviceAccountRef:
+                properties:
+                  name:
+                    type: string
+                  namespace:
+                    type: string
+                type: object
             type: object
           status:
             description: ClusterAccessStatus defines the observed state of ClusterAccess
