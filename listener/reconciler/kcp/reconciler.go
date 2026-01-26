@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/platform-mesh/golang-commons/logger"
 	"github.com/platform-mesh/kubernetes-graphql-gateway/common/config"
 	"github.com/platform-mesh/kubernetes-graphql-gateway/listener/pkg/apischema"
@@ -40,9 +41,12 @@ func NewKCPReconciler(
 		return nil, fmt.Errorf("APIExportEndpointSliceName must be configured for KCP mode")
 	}
 
-	// Create the apiexport provider
+	// Create the apiexport provider with logging
+	providerLogger := log.ComponentLogger("apiexport-provider").Logr()
+	spew.Dump("Creating apiexport provider with endpoint slice name:", endpointSliceName)
 	provider, err := apiexport.New(opts.Config, endpointSliceName, apiexport.Options{
 		Scheme: opts.Scheme,
+		Log:    &providerLogger,
 	})
 	if err != nil {
 		log.Error().Err(err).Msg("failed to create apiexport provider")

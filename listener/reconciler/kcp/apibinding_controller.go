@@ -37,8 +37,11 @@ type APIBindingReconciler struct {
 }
 
 func (r *APIBindingReconciler) Reconcile(ctx context.Context, req mcreconcile.Request) (ctrl.Result, error) {
+	r.Log.Info().Str("cluster", req.ClusterName).Str("name", req.Name).Msg("Reconcile called")
+
 	// ignore system workspaces (e.g. system:shard)
 	if strings.HasPrefix(req.ClusterName, "system") {
+		r.Log.Info().Str("cluster", req.ClusterName).Msg("Ignoring system workspace")
 		return ctrl.Result{}, nil
 	}
 

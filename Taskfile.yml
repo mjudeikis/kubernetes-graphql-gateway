@@ -114,4 +114,4 @@ tasks:
           kill $PID 2>/dev/null || true
           sleep 2
         fi
-      - go run main.go listener
+      - go run ./cmd/listener/listener.go --apiexport-endpoint-slice-name tenancy.kcp.io

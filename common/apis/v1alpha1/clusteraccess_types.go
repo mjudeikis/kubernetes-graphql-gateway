@@ -119,10 +119,6 @@ type ClusterAccessList struct {
 	Items           []ClusterAccess `json:"items"`
 }
 
-func init() {
-	SchemeBuilder.Register(&ClusterAccess{}, &ClusterAccessList{})
-}
-
 // GetConditions returns the conditions from the ClusterAccess status
 // This method implements the RuntimeObjectConditions interface
 func (ca *ClusterAccess) GetConditions() []metav1.Condition {

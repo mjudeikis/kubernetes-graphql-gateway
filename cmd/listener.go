@@ -22,6 +22,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/metrics/filters"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
+	kcpapisv1alpha1 "github.com/kcp-dev/sdk/apis/apis/v1alpha1"
 	kcpapis "github.com/kcp-dev/sdk/apis/apis/v1alpha2"
 	kcpcore "github.com/kcp-dev/sdk/apis/core/v1alpha1"
 	kcptenancy "github.com/kcp-dev/sdk/apis/tenancy/v1alpha1"
@@ -41,6 +42,7 @@ var listenCmd = &cobra.Command{
 		utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
 		if appCfg.EnableKcp {
+			utilruntime.Must(kcpapisv1alpha1.AddToScheme(scheme))
 			utilruntime.Must(kcpapis.AddToScheme(scheme))
 			utilruntime.Must(kcpcore.AddToScheme(scheme))
 			utilruntime.Must(kcptenancy.AddToScheme(scheme))
@@ -71,7 +73,7 @@ var listenCmd = &cobra.Command{
 			metricsServerOptions.FilterProvider = filters.WithAuthenticationAndAuthorization
 		}
 
-		mgrOpts := ctrl.Options{
+		opts := ctrl.Options{
 			Scheme:                 scheme,
 			Metrics:                metricsServerOptions,
 			HealthProbeBindAddress: defaultCfg.HealthProbeBindAddress,
@@ -90,7 +92,7 @@ var listenCmd = &cobra.Command{
 			Scheme:                 scheme,
 			Client:                 clt,
 			Config:                 restCfg,
-			ManagerOpts:            mgrOpts,
+			ManagerOpts:            opts,
 			OpenAPIDefinitionsPath: appCfg.OpenApiDefinitionsPath,
 		}
 

@@ -1,0 +1,7 @@
+apiVersion: gateway.platform-mesh.io/v1alpha1
+kind: GraphQL
+metadata:
+  name: example-graphql
+  namespace: default
+spec:
+  url: "http://graphql-gateway.default.svc.cluster.local:8080/graphql"
